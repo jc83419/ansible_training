@@ -5,11 +5,11 @@
 
   tasks:
   - name: Configure Arista Vlans
-    eos_template:
+    eos_config:
       src: vlans.j2
       provider: "{{ eos_connection }}"
 
   - name: ConfigureArista Eth Interfaces
-    eos_template:
+    eos_config:
       src: intf.j2
       provider: "{{ eos_connection }}"
