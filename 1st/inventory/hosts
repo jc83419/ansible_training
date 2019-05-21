@@ -1,0 +1,12 @@
+[leafs]
+leaf01 ansible_host=10.10.30.110
+leaf02 ansible_host=10.10.30.111
+
+[spines]
+spine01 ansible_host=10.10.30.112
+spine02 ansible_host=10.10.30.113
+
+[arista:children]
+leafs
+spines
+

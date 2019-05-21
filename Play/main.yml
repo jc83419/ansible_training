@@ -1,0 +1,16 @@
+---
+  - hosts: localhost
+    gather_facts: false
+    tasks:
+      - include_tasks: inner.yml
+        loop:
+          - 1
+          - 3
+          - 2
+        loop_control:
+          loop_var: outer_item
+          extended: yes
+      - name: test1
+        debug:
+          msg: "{{ ansible_loop.allitems }}"
+        

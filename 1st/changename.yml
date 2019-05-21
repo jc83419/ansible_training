@@ -1,0 +1,42 @@
+---
+  - hosts: leafs
+    gather_facts: false
+    vars:
+      set_hostname: "{{ inventory_hostname }}"
+    
+    tasks:
+      - debug:
+          msg: "my username is {{ ansible_user }} and pwd: {{ ansible_password }}"
+      - name: Gather facts
+        eos_facts:
+          
+        when: ansible_network_os =='eos'
+
+      - name: Get config for EOS devices
+        eos_facts:
+          gather_subset: all
+      - name: Display the config
+        debug:
+          msg: "The hostname is {{ ansible_net_hostname }} and the OS is {{ ansible_net_version }}"
+      
+      - name: Update hostname
+        eos_config:
+          backup: yes
+          lines: 
+            - hostname {{ inventory_hostname }}
+        when: ansible_net_hostname != set_hostname
+
+      - name: Gat the change config for EOS devices
+        eos_facts:
+          gather_subset: all
+      - name: Display the changed config
+        debug:
+          msg: " The hostname is {{ ansible_net_hostname }} and the OS is {{ ansible_net_version }}"
+      - name: Save the configure and backup
+        eos_config:
+          #diff_against: running
+          save_when: modified
+          backup: yes
+
+
+

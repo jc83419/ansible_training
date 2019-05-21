@@ -1,0 +1,24 @@
+---
+  - hosts: localhost
+    remote_user: root    
+    
+    tasks:
+      - name: ansible_facts_debug
+        debug: var=ansible_facts
+      - name: "shut down Debian flavored systems"
+        
+        command: echo "shut"
+        when: ansible_facts['os_family'] == "Debian"
+        
+      - name: count our fruit
+        debug:
+          msg: "{{ item }} with index {{ my_idx }}"
+        loop:
+          - apple
+          - banana
+          - pear
+        loop_control:
+          index_var: my_idx
+
+
+        

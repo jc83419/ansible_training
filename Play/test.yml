@@ -1,0 +1,29 @@
+---
+- hosts: webservers
+  remote_user: testuser
+  become: yes
+  tasks:
+    - name: test connection
+      ping: 
+      remote_user: yourname
+
+
+
+- hosts: database
+  connection: local
+  remote_user: user1
+  tasks:
+    - name: ping server
+      ping:
+      remote_user: user2
+    - name: find port number
+      service:
+        name: httpd
+        state: started
+  handlers:
+    - name: restart memcached
+      service:
+        name: memcached
+        state: restarted
+      listen: "restart web services"
+

@@ -1,0 +1,25 @@
+---
+  - hosts: leafs
+    gather_facts: no
+
+    tasks:
+      - name: show version
+        eos_command:
+          commands: 
+            - show version
+            - show interface status
+          #wait_for: result[0] contains Arista
+            
+        register: command_output
+
+
+      - name: using cli transport, check whether the switch is in maintenance mode
+        eos_command:
+          commands: show maintenance
+         # wait_for: result[0] contains 'Under Maintenance'
+        register: command_output2
+
+      - name: print on terminal screen
+        debug:
+          msg: "{{ command_output.stdout_lines[0][3] }}"
+          
