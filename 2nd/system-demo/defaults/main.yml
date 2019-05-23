@@ -1,0 +1,4 @@
+---
+# vars file for system-demo
+  dns: '8.8.8.8 8.8.4.4'
+  ansible_network_os: eos

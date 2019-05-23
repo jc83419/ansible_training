@@ -1,0 +1,8 @@
+---
+  - name: configure hostname
+    eos_config:
+      lines: hostname {{ inventory_hostname }}
+      
+  - name: configure DNS
+    eos_config:
+      lines: ip name-server {{ dns }}

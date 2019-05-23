@@ -1,0 +1,56 @@
+---
+  - name: config EOS DNS
+    hosts: leafs
+    connection: network_cli
+    gather_facts: yes
+    become: yes
+    become_method: enable
+    
+    vars:
+      ansible_user: admin
+      ansible_password: admin
+      ansible_network_os: eos
+      ansible_network_provider: ansible-network.arista_eos
+      dns: '1.1.1.1 2.2.2.2'
+      subnet:
+        - system
+        - interfaces
+
+    tasks:
+      - name: include_system role
+        include_role:
+          name: system-demo
+
+      - name: collect facts from eos
+        include_role:
+          name: ansible-network.arista_eos
+          tasks_from: get_facts
+      
+      - name: get config
+        import_role:
+          name: ansible-network.config_manager
+          tasks_from: get
+      
+      - name: display the device configuration to stdout
+        debug:
+          msg: "{{ configuration.split('\n') }}"
+      
+      - name: save output to a file
+        copy:
+          content: "{{ configuration }}"
+          dest: "./config/{{ inventory_hostname }}_{{ ansible_date_time.date }}"
+
+      
+  #  vars:
+   #   dns: '8.8.8.8 8.8.4.4'
+    #  ansible_network_os: eos
+    
+
+   # tasks:
+   #   - name: configure hostname
+   #     eos_config:
+   #       lines: hostname {{ inventory_hostname }}
+   #   
+   #   - name: configure DNS
+   #     eos_config:
+   #       lines: ip name-server {{ dns }}
