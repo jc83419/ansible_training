@@ -39,6 +39,9 @@
         copy:
           content: "{{ configuration }}"
           dest: "./config/{{ inventory_hostname }}_{{ ansible_date_time.date }}"
+      - name: copy confg to eos
+        eos_config:
+          src: "./config/{{ inventory_hostname }}_{{ ansible_date_time.date }}"
 
       
   #  vars:
