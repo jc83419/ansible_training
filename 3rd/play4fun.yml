@@ -1,0 +1,55 @@
+---
+  - name: Gather information from switch
+    hosts: arista
+    gather_facts: no
+
+    
+    
+    tasks: 
+      - name: Gather sw facts
+        eos_facts:
+        register: eosfacts
+
+
+      - name: Display Version
+        debug:
+          msg: "The EOS version is {{ ansible_net_version }}"
+      
+
+      - name: change device name
+        eos_config:
+          lines:
+            - hostname {{ inventory_hostname }}
+            - write
+        when: ansible_net_hostname != inventory_hostname
+
+
+
+
+
+
+      - name: Display name
+        debug:
+          msg: "the hostname is {{ ansible_net_hostname }}"
+
+
+      - name: Collect output of show cli
+        eos_command:
+          commands:
+            - show run | i hostname
+            - show ip interface brief 
+        tags: show
+        register: show_output
+
+      - name: Display the command output
+        debug:
+          var: show_output
+
+        tags: show
+
+      - name: Display th hostname
+        debug:
+          msg: "the hostname is {{ show_output.stdout[0] }}"
+        tags: show
+
+

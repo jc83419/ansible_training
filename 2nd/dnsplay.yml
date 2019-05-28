@@ -17,6 +17,9 @@
         - interfaces
 
     tasks:
+      - name: Get facts
+        eos_facts:
+        
       - name: include_system role
         include_role:
           name: system-demo
@@ -44,6 +47,25 @@
           src: "./config/{{ inventory_hostname }}_{{ ansible_date_time.date }}"
 
       
+
+
+      - name: Display some facts
+        debug:
+          msg: "The hostname is {{ ansible_net_hostname }} and the OS is {{ ansible_net_version }}"
+     
+      - name: Write facts to disk using a template
+        copy:
+          content: |
+            #jinja2: lstrip_blocks: True
+            EOS device info:
+              {% for host in groups['leafs'] %}
+              Hostname: {{ hostvars[host].ansible_net_hostname }}
+              Version: {{ hostvars[host].ansible_net_version }}
+              Model: {{ hostvars[host].ansible_net_model }}
+              Serial: {{ hostvars[host].ansible_net_serialnum }}
+              {% endfor %}
+          dest: "./config/switch-facts"
+        run_once: yes
   #  vars:
    #   dns: '8.8.8.8 8.8.4.4'
     #  ansible_network_os: eos
