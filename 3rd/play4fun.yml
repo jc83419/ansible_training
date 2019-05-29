@@ -24,10 +24,6 @@
         when: ansible_net_hostname != inventory_hostname
 
 
-
-
-
-
       - name: Display name
         debug:
           msg: "the hostname is {{ ansible_net_hostname }}"

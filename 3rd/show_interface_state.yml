@@ -1,0 +1,36 @@
+---
+  - name: Gather information from switches
+    hosts: arista
+    gather_facts: no
+
+
+    tasks:
+      - name: Display extra variable
+        debug:
+          msg: "User provided command line variable: {{ command_line_variable }} "
+        when: command_line_variable is defined
+
+      - name: Gather the facts
+        eos_facts:
+
+      - name: Display IPv4 Address
+        debug:
+          msg: "Found Addr: {{ item }}"
+        loop: "{{ ansible_net_all_ipv4_addresses }}"
+
+
+      - name: Display Interfaces
+        debug:
+          msg: "Found Interfaces: {{ item.key }}"
+
+        loop: "{{ ansible_net_interfaces|dict2items }}"
+
+      - name: Display Interfaces with line protocal not up
+        debug:
+          msg: "Found interface: {{ item.key }}"
+        loop: "{{ ansible_net_interfaces|dict2items }}"
+        when: item.value.lineprotocol != "up"
+    
+
+
+
