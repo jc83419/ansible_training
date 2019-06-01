@@ -1,0 +1,28 @@
+---
+  - name: Backup switch configurations
+    hosts: arista
+    gather_facts: no
+
+    tasks:
+      - name: backup the config
+        eos_config:
+          backup: yes
+        register: config_output
+
+      - name: RENAME Backup
+        copy:
+          src: "{{config_output.backup_path}}"
+          dest: "./backup/{{ inventory_hostname }}.config"
+      - name: Remove logging line
+        lineinfile:
+          path: "./backup/{{ inventory_hostname }}.config"
+          line: "logging host 192.168.0.200"
+          state: absent
+      - name: Remove SNMP Lines - REGEXP
+        lineinfile:
+          path: "./backup/{{ inventory_hostname }}.config"
+          regexp: 'snmp-server community ansible-.*'
+          state: absent
+
+
+

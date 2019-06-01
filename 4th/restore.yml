@@ -1,0 +1,39 @@
+---
+  - name: Restore Configuration
+    hosts: arista
+    gather_facts: no
+
+
+    tasks:
+      - name: Gather SW facts
+        eos_facts:
+      #- name: scan and change local key
+       # command: ssh-keygen -f "~/.ssh/known_hosts" -R {{ ansible_net_interfaces.Management1.ipv4.address }}
+
+      - name: Copy key to arista
+        command: scp ~/.ssh/id_rsa.pub admin@{{ ansible_net_interfaces.Management1.ipv4.address }}:/mnt/flash/admin_rsa.pub
+
+      - name: bound the key to admin
+        eos_config:
+          lines:
+            - username admin sshkey file flash:admin_rsa.pub 
+
+      
+
+  - name: SSH to Switch
+    hosts: arista
+    connection: ssh
+    gather_facts: no
+  
+    
+    
+    tasks:
+      - name: Copy Running config to switch
+        shell: "scp ./backup/{{ inventory_hostname }}.config admin@{{ ansible_net_interfaces.Management1.ipv4.address}}:/mnt/flash/{{ inventory_hostname}}.config"
+        when: "'hosts' not in group_names"
+       
+      - name: CONFIG REPLACE
+        eos_command:
+          commands:
+            - config replace flash:{{inventory_hostname}}.config force
+        when: "'hosts' not in group_names"

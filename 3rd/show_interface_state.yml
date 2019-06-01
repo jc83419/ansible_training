@@ -29,7 +29,7 @@
         debug:
           msg: "Found interface: {{ item.key }}"
         loop: "{{ ansible_net_interfaces|dict2items }}"
-        when: item.value.lineprotocol != "up"
+        when: item.value.lineprotocol != "down"
     
 
 

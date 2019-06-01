@@ -1,0 +1,48 @@
+---
+  - name: SNMP RO/RW String Config
+    hosts: arista
+    gather_facts: no
+
+
+    tasks:
+      - name: Gather sw facts
+        eos_facts:
+
+      - name: Change hostname
+        eos_config:
+          lines:
+            - hostname {{ inventory_hostname }}
+            - write
+        when: ansible_net_hostname != inventory_hostname
+
+      - name: Ensure that the desired SNMP string are present
+        eos_config:
+          commands:
+            - snmp-server community ansible-public ro
+            - snmp-server community ansible-private rw
+            - snmp-server community ansible-test ro
+
+  - name: General env config for EOS switches
+    hosts: arista
+    gather_facts: no
+
+    tasks:
+      - name: Push General switch configs
+        eos_config:
+          src: general_switch.cfg
+
+  - name: Save config if change
+    hosts: arista
+    gather_facts: no
+
+    tasks:
+      - name: Save
+        eos_config:
+          save_when: modified
+
+
+
+
+
+
+            
